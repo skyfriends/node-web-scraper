@@ -1,24 +1,24 @@
-//brandongalli github repo
-// Downloads all the crawlable files of example.com.
-// The files are saved in the same structure as the structure of the website, by using the `bySiteStructure` filenameGenerator.
-// Links to other websites are filtered out by the urlFilter
 const scrape = require('website-scraper');
-const websiteUrl = 'https://brandongalli.com';
 
-scrape({
+const websiteUrl = process.argv.length > 2 ? process.argv[2] : console.error('Please specify a site to scrape as the last command line argument. See README for example.')
+
+const scrapeOptions = {
   urls: [websiteUrl],
-  urlFilter: function (url) {
-    return url.indexOf(websiteUrl) === 0;
-  },
+  urlFilter: (url) => url.indexOf(websiteUrl) === 0,
   recursive: true,
   maxDepth: 50,
   prettifyUrls: true,
   filenameGenerator: 'bySiteStructure',
-  directory: './node-website',
-})
-  .then((data) => {
-    console.log('Entire website succesfully downloaded');
-  })
-  .catch((err) => {
-    console.log('An error ocurred', err);
-  });
+  directory: websiteUrl
+};
+
+const scrapeSite = async () => {
+  try {
+    await scrape(scrapeOptions);
+    console.log('Entire website succesfully downloaded!');
+  } catch (err) {
+    console.error('An error occurred', err);
+  }
+};
+
+scrapeSite();
